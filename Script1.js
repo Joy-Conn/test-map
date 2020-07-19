@@ -51,7 +51,23 @@ function test2(position) {
     var p = new Y.LatLng(lat, lon);
     //.drawMap((緯度、経度),倍率,.NORMALなら標準地図,.PHOTOなら航空写真)
     ymap.drawMap(p, 22, Y.LayerSetId.NORMAL);
+
+
+    //ダブルclickした場所にマーカーを立てる
+    Y.Event.addListener(ymap, 'dblclick', pin);
+    // マーク用の変数
+    var mark = [];
+    function pin(latlng) {
+        // マークを新規に生成
+        mark.push(new Y.Label(new Y.LatLng(latlng.lat(), latlng.lng()), latlng.toString()));
+        ymap.addFeatures(mark);
+    }
+
 }
 
+//課題点　取得した現在地の情報と実際の緯度経度が異なるので、取得した精度をもとに地図上で正しい位置が表示されるようにしたい。
 //いつもYahoo! Open Local Platform（YOLP）をご利用いただきありがとうございます。
 //この度誠に勝手ながら、2020年10月31日（土）をもちまして、以下のWeb API、SDKの提供を終了いたします。
+
+//
+
