@@ -34,17 +34,24 @@ function test2(position) {
             dragging: true
         }
     });
-    //.Y.LayerSetControlで地図のレイヤセットを切り替えるためのボタンを表示
-    var control = new Y.LayerSetControl();
+    //地図のレイヤセットを切り替えるためのボタンを表示
+    var control_1 = new Y.LayerSetControl();
+    //地図検索のユーザーインターフェースを表示
+    var control_2 = new Y.SearchControl();
+    //地図上の距離の目安となるスケールバーを表示
+    var control_3 = new Y.ScaleControl();
+    //地図の縮尺を変更するための横長スライダー形式のユーザーインターフェースを表示
+    var control_4 = new Y.SliderZoomControlHorizontal();
     //コントロールの追加
-    ymap.addControl(control);
+    ymap.addControl(control_1);
+    ymap.addControl(control_2);
+    ymap.addControl(control_3);
+    ymap.addControl(control_4);
 
     var p = new Y.LatLng(lat, lon);
     //.drawMap((緯度、経度),倍率,.NORMALなら標準地図,.PHOTOなら航空写真)
-    ymap.drawMap(p, 20, Y.LayerSetId.NORMAL);
+    ymap.drawMap(p, 22, Y.LayerSetId.NORMAL);
 }
 
-//課題点　取得した現在地の情報と実際の緯度経度が異なるので、取得した精度をもとに地図上で正しい位置が表示されるようにしたい。
 //いつもYahoo! Open Local Platform（YOLP）をご利用いただきありがとうございます。
 //この度誠に勝手ながら、2020年10月31日（土）をもちまして、以下のWeb API、SDKの提供を終了いたします。
-//studioのインストーラについてlat - 0.1463142, lon - 0.0076688
