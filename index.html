@@ -1,16 +1,146 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <title>位置情報取得サンプル</title>
 
-    <title>位置情報</title>
+    <!-- 動作処理 -->
+    <script>
+    // 現在地取得処理
+    function initMap() {
+      // Geolocation APIに対応している
+      if (navigator.geolocation) {
+        // 現在地を取得
+        navigator.geolocation.getCurrentPosition(
+          // 取得成功した場合
+            function (position) {
 
+
+            // 緯度・経度を変数に格納
+            var mapLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+            // マップオプションを変数に格納
+            var mapOptions = {
+              zoom : 15,          // 拡大倍率
+              center : mapLatLng  // 緯度・経度
+            };
+            // マップオブジェクト作成
+            var map = new google.maps.Map(
+              document.getElementById("map"), // マップを表示する要素
+              mapOptions         // マップオプション
+                );
+
+            //　マップにマーカーを表示する
+            var marker = new google.maps.Marker({
+              map : map,             // 対象の地図オブジェクト
+              position : mapLatLng   // 緯度・経度
+            });
+
+
+                //CSVファイルを読み込む関数getCSV()の定義
+                function getCSV() {
+                    var req = new XMLHttpRequest(); // HTTPでファイルを読み込むためのXMLHttpRrequestオブジェクトを生成
+                    req.open("get", "map.csv", true); // アクセスするファイルを指定
+                    req.send(null); // HTTPリクエストの発行
+
+                    // レスポンスが返ってきたらconvertCSVtoArray()を呼ぶ	
+                    req.onload = function () {
+                        convertCSVtoArray(req.responseText); // 渡されるのは読み込んだCSVデータ
+                    }
+                }
+
+                var markerData = [3];
+
+                // 読み込んだCSVデータを二次元配列に変換する関数convertCSVtoArray()の定義
+                function convertCSVtoArray(str) { // 読み込んだCSVデータが文字列として渡される
+                    var result = []; // 最終的な二次元配列を入れるための配列
+                    var tmp = str.split("/n"); // 改行を区切り文字として行を要素とした配列を生成
+
+                    // 各行ごとにカンマで区切った文字列を要素とした二次元配列を生成
+                    for (var i = 0; i < tmp.length; ++i) {
+                        result[i] = tmp[i].split(',');
+                    }
+                    markerData = [ // マーカーを立てる場所名・緯度・経度 35.9368352
+                        {
+                            name: "A点",
+                            lat: 35.9368352,
+                            lng: 136.15759389999998,
+                        }, {
+                            name: "B点",
+                            lat: 35.9168352,
+                            lng: 136.15759349999998,
+                        }, {
+                            name: "C点",
+                            lat: 35.9268352,
+                            lng: 136.16759329999998,
+                        }, {
+                            name: "C点",
+                            lat: 35.9268352,
+                            lng: 136.14759329999998,
+                        }
+                    ];
+                }
+
+                getCSV(); //最初に実行される
+
+            var marker = [];
+            var infoWindow = [];
+
+                // マーカー毎の処理
+                for (var i = 0; i < markerData.length; i++) {
+                    markerLatLng = new google.maps.LatLng({ lat: markerData[i]['lat'], lng: markerData[i]['lng'] }); // 緯度経度のデータ作成
+                    marker[i] = new google.maps.Marker({ // マーカーの追加
+                        position: markerLatLng, // マーカーを立てる位置を指定
+                        map: map // マーカーを立てる地図を指定
+                    });
+
+                    infoWindow[i] = new google.maps.InfoWindow({ // 吹き出しの追加
+                        content: markerData[i]['name'] // 吹き出しに表示する内容
+                    });
+
+                    markerEvent(i); // マーカーにクリックイベントを追加
+
+                }
+
+                // マーカーにクリックイベントを追加
+                function markerEvent(i) {
+                    marker[i].addListener('click', function () { // マーカーをクリックしたとき
+                        infoWindow[i].open(map, marker[i]); // 吹き出しの表示
+                    });
+                }
+
+
+
+
+          },
+          // 取得失敗した場合
+          function(error) {
+            // エラーメッセージを表示
+            switch(error.code) {
+              case 1: // PERMISSION_DENIED
+                alert("位置情報の利用が許可されていません");
+                break;
+              case 2: // POSITION_UNAVAILABLE
+                alert("現在位置が取得できませんでした");
+                break;
+              case 3: // TIMEOUT
+                alert("タイムアウトになりました");
+                break;
+              default:
+                alert("その他のエラー(エラーコード:"+error.code+")");
+                break;
+            }
+          }
+        );
+      // Geolocation APIに対応していない
+      } else {
+        alert("この端末では位置情報が取得できません");
+      }
+    }
+    </script>
 </head>
 <body>
-    <!-- 地図の大きさを設定 -->
-    <div id="map" style="width:1242px; height:2688px"></div>
-    <script type="text/javascript" charset="utf8" src="https://map.yahooapis.jp/js/V1/jsapi?appid=dj00aiZpPVFEblowTklGeDJsNiZzPWNvbnN1bWVyc2VjcmV0Jng9YWI-"></script>
-    <script src="Script1.js"></script>
-    <p>この度誠に勝手ながら、2020年10月31日（土）をもちまして、APIの提供を終了いたします。</p>
+    <h1>位置情報取得サンプル</h1>
+    <div id="map" style="width:1609px; height:937px"></div>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdQIdXaTZvKkpZj8GjxXYO2NVR0QXxVPk&callback=initMap"></script>
 </body>
-</html >
+</html>
